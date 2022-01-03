@@ -8,9 +8,8 @@ output:
 
 ## Loading and preprocessing the data
 
-```{r, echo = TRUE}
 
-
+```r
 zip_url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 
 download.file(zip_url, "dataset.zip")
@@ -18,38 +17,36 @@ download.file(zip_url, "dataset.zip")
 unzip("dataset.zip")
 
 data <- read.csv("activity.csv")
-
 ```
 
 ## What is mean total number of steps taken per day?
 
 Calculating the total number of steps taken per day.
 
-```{r sum, echo = TRUE}
 
+```r
 steps <- aggregate(steps ~ date, data, sum)
-
 ```
 
 Generating histogram of the total number of steps taken per day.
 
-```{r histogram, echo = TRUE}
 
+```r
       hist(steps$steps,
            col = "darkcyan", 
            xlab = "Steps", 
            main = "Total Steps Taken Per Day")
-
 ```
+
+![](PA1_template_files/figure-html/histogram-1.png)<!-- -->
 
 Calculating mean and median of the total number of steps taken per day.
 
-```{r mean and median of total number of steps taken per day, echo = TRUE}
 
+```r
       mean_steps <- mean(steps$steps)
       
       median_steps <- median(steps$steps)
-      
 ```
 
 
@@ -57,8 +54,8 @@ Calculating mean and median of the total number of steps taken per day.
 
 Generating time series plot of the 5-minute interval and the average number of steps taken, averaged across all days.
 
-```{r time series plot, echo = TRUE}
 
+```r
       steps <- aggregate(steps ~ interval, data, mean)
       
       plot(steps ~ interval, 
@@ -68,33 +65,32 @@ Generating time series plot of the 5-minute interval and the average number of s
            xlab = "Interval",
            ylab = "Steps",
            main = "Average Number of Steps Taken")
-
 ```
+
+![](PA1_template_files/figure-html/time series plot-1.png)<!-- -->
 
 Calculating which 5-interval contains the maximum number of steps.
 
-```{r maximum, echo = TRUE}
 
+```r
 maximum_steps <- steps[which.max(steps$steps), ]$interval
-
 ```
 
 ## Imputing missing values
 
 Calculating the total number of missing values in the dataset. 
 
-```{r missing values, echo = TRUE}
 
+```r
       missing_values <- is.na(data$steps)
       
       total <- sum(missing_values)
-      
 ```
 
 Replacing missing values in dataset. 
 
-```{r replacing, echo = TRUE}
 
+```r
       steps <- aggregate(steps ~ interval, data, mean)
       
       step_mean <- function(interval)  {
@@ -111,33 +107,33 @@ Replacing missing values in dataset.
 
 Generating histogram of the total number of steps taken each day.
 
-```{r hist, echo = TRUE}
 
+```r
       steps <- aggregate(steps ~ date, complete_data, sum)
       
       hist(steps$steps,
            col = "violetred4", 
            xlab = "Steps", 
            main = "Total Steps Taken Per Day")
-           
 ```
+
+![](PA1_template_files/figure-html/hist-1.png)<!-- -->
 
 Calculating mean and median total number of steps taken per day.
 
-```{r mean and median, echo = TRUE}
-      
+
+```r
       mean_steps <- mean(steps$steps)
       
       median_steps <- median(steps$steps)
-      
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 Generating new factor variable with two levels - "weekday" and "weekend".
 
-```{r weekday and weekend, echo = TRUE}
-      
+
+```r
       complete_data$date <- as.Date(strptime(complete_data$date, format = "%Y-%m-%d"))
       
       complete_data$category <- weekdays(complete_data$date)
@@ -149,13 +145,12 @@ Generating new factor variable with two levels - "weekday" and "weekend".
             complete_data[entry, ]$category <- "Weekend"
          }
       }
-      
-```      
+```
 
 Generating panel plot containing time series plot of the 5-minute interval(x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).   
 
-```{r panel plot, echo = TRUE}
-      
+
+```r
       library(ggplot2)
       
       steps <- aggregate(steps ~ interval + category, complete_data, mean)
@@ -168,5 +163,6 @@ Generating panel plot containing time series plot of the 5-minute interval(x-axi
          facet_wrap(~category, nrow = 2, ncol = 1)
       
       print(g)
-
 ```
+
+![](PA1_template_files/figure-html/panel plot-1.png)<!-- -->
